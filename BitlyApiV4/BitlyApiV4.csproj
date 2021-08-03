@@ -1,6 +1,6 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 	<PropertyGroup>
-		<TargetFrameworks>netstandard2.0;net45;netstandard2.1</TargetFrameworks>
+		<TargetFrameworks>netstandard2.0;net45;netstandard2.1;net5.0</TargetFrameworks>
 	</PropertyGroup>
 	<!-- Conditionally obtain references for the .NET Framework 4.5 target -->
 	<ItemGroup Condition=" '$(TargetFramework)' == 'net45' ">
@@ -14,7 +14,6 @@
 		<Version>4.0.2</Version>
 		<Authors>Jeff Jacob</Authors>
 		<Company></Company>
-		<GeneratePackageOnBuild>true</GeneratePackageOnBuild>
 		<PackageProjectUrl>https://github.com/doublej42/BitlyAPI</PackageProjectUrl>
 		<PackageIcon>bitly.png</PackageIcon>
 		<PackageIconUrl />
@@ -25,6 +24,10 @@
 	<ItemGroup>
 		<PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
 	</ItemGroup>
+
+	<Target Name="NugetPackAutoVersioning" AfterTargets="PostBuildEvent">
+		<Exec Command="dotnet pack --no-build --configuration $(Configuration) --output &quot;$(SolutionDir)nuget&quot; -p:TargetFrameworks=net5.0" />
+	</Target>
 
 	<ItemGroup>
 		<None Include="..\nuget\bitly.png">
