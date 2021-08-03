@@ -1,6 +1,6 @@
 ﻿using System;
+using System.Diagnostics;
 using System.Linq;
-using System.Threading;
 using System.Threading.Tasks;
 using BitlyAPI;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -18,6 +18,7 @@ namespace BitlyTestV4
         {
             var bitly = new Bitly(_genericAccessToken);
             Assert.IsNotNull(bitly);
+
             var groups = bitly.GetGroups().Result;
             Assert.IsTrue(groups.Any());
         }
@@ -28,9 +29,10 @@ namespace BitlyTestV4
         {
             var bitly = new Bitly(_genericAccessToken);
             Assert.IsNotNull(bitly);
+
             var linkResponse = await bitly.PostShorten("https://www.google.ca/");
             Assert.AreEqual("https://s.phansoft.ca/1WuTssO", linkResponse.Link);
-            Assert.AreEqual("https://www.google.ca/",linkResponse.LongUrl);
+            Assert.AreEqual("https://www.google.ca/", linkResponse.LongUrl);
         }
 
         [TestMethod]
@@ -38,6 +40,7 @@ namespace BitlyTestV4
         {
             var bitly = new Bitly(_genericAccessToken);
             Assert.IsNotNull(bitly);
+
             var firstPage = await bitly.GetBitlinksByGroup();
             Assert.IsTrue(firstPage.Links.Any());
         }
@@ -62,6 +65,7 @@ namespace BitlyTestV4
             Assert.IsNotNull(newestLink);
 
             var metrics = await bitly.GetMetrics(linkResponse.Id);
+            Assert.IsNotNull(metrics);
         }
 
         [TestMethod]
@@ -69,11 +73,16 @@ namespace BitlyTestV4
         {
             var bitly = new Bitly(_genericAccessToken);
             Assert.IsNotNull(bitly);
+
             var now = DateTime.Now;
-            var testUrl = "https://www.google.ca/?q=" + now.ToShortDateString() +  now.ToLongTimeString();
+            var testUrl = "https://www.google.ca/?q=" + now.ToShortDateString() + now.ToLongTimeString();
             var linkResponse = await bitly.PostShorten(testUrl);
+
+            Assert.IsNotNull(linkResponse);
+
             //Bitly won't show links that are very new
-            Thread.Sleep(new TimeSpan(0,0,0,30));
+            await Task.Delay(TimeSpan.FromSeconds(30));
+
             var newest = await bitly.GetBitlinksByGroup(createdAfter: now);
             Assert.IsTrue(newest.Links.Any(l => l.LongUrl == testUrl));
         }
@@ -84,13 +93,14 @@ namespace BitlyTestV4
         {
             var bitly = new Bitly(_genericAccessToken);
             Assert.IsNotNull(bitly);
+
             var firstPage = await bitly.GetBitlinksByGroup(size: 1);
             Assert.IsTrue(firstPage.Links.Any());
             Assert.IsTrue(firstPage.Pagination.Total > firstPage.Pagination.Size);
-            var secondPage = await bitly.GetBitlinksByGroup(size: 1, page:2);
-            Assert.AreEqual(2,secondPage.Pagination.Page);
-            Assert.AreNotEqual(firstPage.Links.First().Link,secondPage.Links.First().Link);
 
+            var secondPage = await bitly.GetBitlinksByGroup(size: 1, page: 2);
+            Assert.AreEqual(2, secondPage.Pagination.Page);
+            Assert.AreNotEqual(firstPage.Links.First().Link, secondPage.Links.First().Link);
         }
     }
 }
