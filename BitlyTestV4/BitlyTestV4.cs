@@ -43,6 +43,28 @@ namespace BitlyTestV4
         }
 
         [TestMethod]
+        public async Task GetMetrics()
+        {
+            var bitly = new Bitly(_genericAccessToken);
+            Assert.IsNotNull(bitly);
+
+            var now = DateTime.Now;
+            var testUrl = "https://www.google.ca/?q=" + now.ToShortDateString() + now.ToLongTimeString();
+            var linkResponse = await bitly.PostShorten(testUrl);
+
+            //Bitly won't show links that are very new
+            await Task.Delay(TimeSpan.FromSeconds(30));
+
+            var newest = await bitly.GetBitlinksByGroup(createdAfter: now);
+            Assert.IsTrue(newest.Links.Any(l => l.LongUrl == testUrl));
+
+            var newestLink = newest.Links.FirstOrDefault();
+            Assert.IsNotNull(newestLink);
+
+            var metrics = await bitly.GetMetrics(linkResponse.Id);
+        }
+
+        [TestMethod]
         public async Task GetBitlinksByGroupRecent()
         {
             var bitly = new Bitly(_genericAccessToken);
