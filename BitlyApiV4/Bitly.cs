@@ -83,6 +83,29 @@ namespace BitlyAPI
             return response.Groups;
         }
 
+        public async Task<BitlyMetrics> GetMetrics(string shortenedUrl, bool summary = true, string unit = default, int units = default, DateTime unitReference = default)
+        {
+            var parameters = new Dictionary<string, string>();
+            
+            if (unit != default)
+                parameters.Add("unit", unit);
+
+            if (units != default)
+                parameters.Add("units", units.ToString());
+
+            if (unitReference != default)
+                parameters.Add("unit_reference", unitReference.ToString("O"));
+
+            var commandUrl = $"bitlinks/{shortenedUrl}/clicks";
+
+            if (summary)
+                commandUrl += "/summary";
+
+            var response = await GetResponse<BitlyMetrics>(commandUrl, parameters);
+
+            return response;
+        }
+
         public async Task<String> PostShortenLink(string longUrl, string groupGuid = null, string domain = null)
         {
             var result =  await PostShorten(longUrl, groupGuid,   domain);
