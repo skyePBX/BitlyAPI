@@ -11,7 +11,7 @@
 		<!-- <TargetFramework>netstandard2.0</TargetFramework> -->
 		<RootNamespace>BitlyAPI</RootNamespace>
 		<AssemblyName>BitlyAPI</AssemblyName>
-		<Version>4.0.2</Version>
+		<Version>4.0.3</Version>
 		<Authors>Jeff Jacob</Authors>
 		<Company></Company>
 		<PackageProjectUrl>https://github.com/doublej42/BitlyAPI</PackageProjectUrl>
@@ -19,6 +19,8 @@
 		<PackageIconUrl />
 		<AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
 		<PackageLicenseExpression>MIT</PackageLicenseExpression>
+		<AssemblyVersion>4.0.3.0</AssemblyVersion>
+		<FileVersion>4.0.3.0</FileVersion>
 	</PropertyGroup>
 
 	<ItemGroup>
